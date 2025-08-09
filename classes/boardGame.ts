@@ -1,29 +1,35 @@
 import { BoardType, PosType } from "../types";
 import { isNumeric } from "../utils";
-
+import { HttpError } from "./httpError";
 
 export class BoardGame {
-    constructor(private board: BoardType) {}
+    private board: BoardType | undefined;
 
-    getBoard() : BoardType{
-        return this.board
+    getBoard(): BoardType | undefined {
+        return this.board;
     }
 
-    fire(pos:PosType) : boolean {
+    setBoard(board: BoardType): void {
+        this.board = board;
+    }
 
-        const shootValue = this.board[pos.y][pos.x]
+    fire(pos: PosType): boolean {
+        if (!this.board) throw new HttpError(401,"Board not initialise");
 
-        if ( shootValue ==="F" ||  shootValue==="X") return false
+        const shootValue = this.board[pos.y][pos.x];
 
-        const successfulShoot = isNumeric(this.board[pos.y][pos.x])
+        if (shootValue === "F" || shootValue === "X") return false;
+
+        const successfulShoot = isNumeric(this.board[pos.y][pos.x]);
+
+        this.board[pos.y][pos.x] = successfulShoot ? "F" : "X";
+
+        return successfulShoot;
+    }
+
+    areAllSubmarineShoot(): boolean {
+        if (!this.board) throw new HttpError(401,"Board not initialise");
         
-        this.board[pos.y][pos.x] = successfulShoot  ? "F" : "X"
-
-        return successfulShoot
-
-    }
-
-    areAllSubmarineShoot () : boolean{
-        return this.board.every(line=>line.every(val=>!isNumeric(val)))
+        return !!this.board.every(line => line.every(val => !isNumeric(val)));
     }
 }

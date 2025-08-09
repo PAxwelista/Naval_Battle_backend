@@ -1,7 +1,17 @@
 import { BoardGame } from "./boardGame";
+import uid2 from "uid2";
 
 export class Player {
-    constructor(private name: string, private boardGame: BoardGame) {}
+    private id: string;
+    private boardGame :BoardGame
+    constructor(private name: string) {
+        this.boardGame = new BoardGame
+        this.id = uid2(10);
+    }
+
+    getId():string{
+        return this.id
+    }
 
     getName(): string {
         return this.name;
