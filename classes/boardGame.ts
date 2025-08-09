@@ -1,7 +1,6 @@
+import { BoardType, PosType } from "../types";
 import { isNumeric } from "../utils";
 
-type BoardType = string[][];
-type Pos = { x: number; y: number };
 
 export class BoardGame {
     constructor(private board: BoardType) {}
@@ -10,7 +9,7 @@ export class BoardGame {
         return this.board
     }
 
-    fire(pos:Pos) : boolean {
+    fire(pos:PosType) : boolean {
 
         const shootValue = this.board[pos.y][pos.x]
 
