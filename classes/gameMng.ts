@@ -1,4 +1,3 @@
-import { pusher } from "pusherInit";
 import { BoardType, PosType, shootResult } from "../types";
 import { Game } from "./game";
 import { HttpError } from "./httpError";
@@ -11,7 +10,7 @@ export class GameMng {
         this.games = [];
     }
 
-    async createGame(gameName: string, player: Player): Promise<void> {
+    createGame(gameName: string, player: Player): void {
         const game = this.getGame(gameName);
         if (game) throw new HttpError(401, "This game name already exist");
 
@@ -47,6 +46,8 @@ export class GameMng {
         const player = game.getPlayer(playerId);
         if (!game.hasSecondPlayer()) throw new HttpError(401, "There is only one player in the game");
         if (!player) throw new HttpError(401, "This player Id doesn't correspond to any player in this game");
-        return game.play(player, shootPos);
+        const shootInfos = game.play(player, shootPos);
+
+        return shootInfos;
     }
 }
