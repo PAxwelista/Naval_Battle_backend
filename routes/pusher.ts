@@ -68,27 +68,27 @@ router.post(
         }
         const player = new Player(playerName);
         gameMng.joinGame(gameName, player);
-        await pusherTrigger(gameName,"joinGame",{info:"A new player has join the game"})
+        await pusherTrigger(gameName, "joinGame", { info: "A new player has join the game" });
         res.status(200).json({ result: true, playerId: player.getId() });
     })
 );
 
 router.post(
     "/initialiseBoard",
-    withErrorHandling(async(req, res) => {
+    withErrorHandling(async (req, res) => {
         if (!checkBody(req.body, ["gameName", "playerId", "board"]))
             return res.status(404).json({ error: "Missing or empty field" });
         const { gameName, playerId, board } = req.body;
 
         gameMng.initialiseBoard(gameName, playerId, board);
-        await pusherTrigger(gameName,"initialiseBoard",{playerId})
+        await pusherTrigger(gameName, "initialiseBoard", { playerId });
         res.status(200).json({ result: true });
     })
 );
 
 router.post(
     "/shoot",
-    withErrorHandling(async(req, res) => {
+    withErrorHandling(async (req, res) => {
         if (!checkBody(req.body, ["gameName", "playerId", "shootPos"]))
             return res.status(404).json({ error: "Missing or empty field" });
         const { gameName, playerId, shootPos } = req.body;
@@ -97,7 +97,13 @@ router.post(
             return res.status(400).json({ error: "One of the fields doesn't have the correct type" });
 
         const shootInfos = gameMng.play(gameName, playerId, shootPos);
-        await pusherTrigger(gameName,"shoot",{playerId ,shootPos,shootInfos})
+        await pusherTrigger(gameName, "shoot", {
+            playerId,
+            shootPosX:shootPos.x,
+            shootPosY:shootPos.y,
+            shootSuccessfull: shootInfos.shootSuccessfull,
+            gameEnd: shootInfos.gameEnd,
+        });
         res.status(200).json({ result: true, shootInfos });
     })
 );
@@ -115,7 +121,11 @@ router.delete("/endGame", (req, res) => {
         return res.status(400).json({ result: false, error: "gameName not in string type" });
     }
 
+    console.log(gameMng)
+
     gameMng.removeGame(gameName);
+
+    console.log(gameMng)
 
     res.status(200).json({ result: true });
 });

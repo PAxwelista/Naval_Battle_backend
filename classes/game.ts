@@ -41,13 +41,15 @@ export class Game {
             throw new HttpError(401, "Only one player in game");
         }
 
-        this.isFirstPlayerTurn = !this.isFirstPlayerTurn;
+        
 
         const targetPlayer = player === this.firstPlayer ? this.secondPlayer : this.firstPlayer;
 
         const shootSuccessfull = targetPlayer.getBoardGame().fire(pos);
 
         const gameEnd = targetPlayer.getBoardGame().areAllSubmarineShoot();
+
+        this.isFirstPlayerTurn = !this.isFirstPlayerTurn;
 
         return { shootSuccessfull, gameEnd };
     }

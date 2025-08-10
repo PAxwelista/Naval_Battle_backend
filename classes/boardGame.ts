@@ -18,7 +18,7 @@ export class BoardGame {
 
         const shootValue = this.board[pos.y][pos.x];
 
-        if (shootValue === "F" || shootValue === "X") return false;
+        if (shootValue === "F" || shootValue === "X") throw new HttpError(403  ,"Player already shoot at this position");
 
         const successfulShoot = isNumeric(this.board[pos.y][pos.x]);
 
